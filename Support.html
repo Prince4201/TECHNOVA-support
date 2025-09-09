@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TECHNOVA Student Support</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-light: #3b82f6;
+            --primary-dark: #1e40af;
+            --secondary: #0ea5e9;
+            --accent: #8b5cf6;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --background: #f8fafc;
+            --surface: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border: #e2e8f0;
+            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background);
+            color: var(--text-primary);
+            line-height: 1.6;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .support-container {
+            width: 100%;
+            max-width: 500px;
+            background: var(--surface);
+            border-radius: 16px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 25px rgba(0, 0, 0, 0.1);
+            height: 85vh;
+        }
+        
+        .support-header {
+            background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+            padding: 20px 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            color: white;
+            position: relative;
+        }
+        
+        .support-header::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+        }
+        
+        .support-avatar {
+            width: 44px;
+            height: 44px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+        
+        .support-title {
+            flex: 1;
+        }
+        
+        .support-title h2 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--success);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            background: #fafafa;
+        }
+        
+        .message {
+            max-width: 85%;
+            padding: 16px 20px;
+            border-radius: 18px;
+            position: relative;
+            line-height: 1.5;
+            animation: messageAppear 0.3s ease-out;
+        }
+        
+        .message.user {
+            background: var(--primary);
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 6px;
+        }
+        
+        .message.bot {
+            background: var(--surface);
+            color: var(--text-primary);
+            align-self: flex-start;
+            border-bottom-left-radius: 6px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--border);
+        }
+        
+        .message-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+        
+        .message-sender {
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        .message-time {
+            font-size: 12px;
+            opacity: 0.7;
+        }
+        
+        .message-status {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 4px;
+            margin-top: 6px;
+            font-size: 12px;
+        }
+        
+        .quick-replies {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .quick-reply {
+            background: rgba(37, 99, 235, 0.1);
+            border: none;
+            border-radius: 18px;
+            padding: 10px 16px;
+            color: var(--primary);
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .quick-reply:hover {
+            background: rgba(37, 99, 235, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .chat-input-area {
+            padding: 20px 24px;
+            background: var(--surface);
+            display: flex;
+            gap: 12px;
+            border-top: 1px solid var(--border);
+            position: relative;
+        }
+        
+        .chat-input-area::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border), transparent);
+        }
+        
+        .input-wrapper {
+            flex: 1;
+            position: relative;
+        }
+        
+        #userInput {
+            width: 100%;
+            padding: 16px 20px;
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            background: var(--surface);
+            color: var(--text-primary);
+            font-size: 16px;
+            outline: none;
+            transition: all 0.2s;
+            font-family: 'Inter', sans-serif;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+        }
+        
+        #userInput:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+        }
+        
+        #sendButton {
+            width: 48px;
+            height: 48px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
+        }
+        
+        #sendButton:hover {
+            background: var(--primary-dark);
+            transform: scale(1.05);
+        }
+        
+        /* Animations */
+        @keyframes messageAppear {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        /* Scrollbar styling */
+        .chat-messages::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .chat-messages::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 10px;
+        }
+        
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        
+        /* Typing animation */
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 12px 16px;
+            background: var(--surface);
+            border-radius: 18px;
+            width: fit-content;
+            margin-bottom: 16px;
+            border: 1px solid var(--border);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        
+        .typing-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--text-secondary);
+            border-radius: 50%;
+            opacity: 0.6;
+            animation: typing 1.4s infinite;
+        }
+        
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+        
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); opacity: 0.6; }
+            30% { transform: translateY(-4px); opacity: 1; }
+        }
+        
+        @media (max-width: 768px) {
+            .support-container {
+                height: 95vh;
+                max-width: 100%;
+            }
+            
+            .message {
+                max-width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="support-container">
+        <div class="support-header">
+            <div class="support-avatar">
+                <i class="fas fa-robot"></i>
+            </div>
+            <div class="support-title">
+                <h2>TECHNOVA Student Support</h2>
+                <div class="status">
+                    <span class="status-dot"></span>
+                    <span>Online - Ready to help</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="chat-messages" id="chatMessages">
+            <div class="message bot">
+                <div class="message-header">
+                    <div class="message-sender">TECHNOVA Assistant</div>
+                    <div class="message-time" id="currentTime"></div>
+                </div>
+                Hello! I'm TECHNOVA Assistant, your AI support guide. 🤖<br><br>
+                I'm here to help you with information about our courses, internship process, task submissions, and any other questions you might have about TECHNOVA.<br><br>
+                How can I assist you today?
+                
+                <div class="quick-replies">
+                    <button class="quick-reply" data-query="Course information">
+                        <i class="fas fa-book"></i> Course Information
+                    </button>
+                    <button class="quick-reply" data-query="Internship process">
+                        <i class="fas fa-briefcase"></i> Internship Process
+                    </button>
+                    <button class="quick-reply" data-query="Task submission">
+                        <i class="fas fa-tasks"></i> Task Submission
+                    </button>
+                    <button class="quick-reply" data-query="Certificate">
+                        <i class="fas fa-certificate"></i> Certificate
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="chat-input-area">
+            <div class="input-wrapper">
+                <input type="text" id="userInput" placeholder="Type your message here...">
+            </div>
+            <button id="sendButton">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const GEMINI_API_KEY = "AIzaSyBezexGsL0VDO_L7mNXfepbIjj4gz14F5s";
+        
+        // TECHNOVA knowledge base
+        const technovaInfo = {
+            courses: [
+                "Artificial Intelligence & Machine Learning (AI & ML)",
+                "Data Science (DS)",
+                "Full Stack Web Development",
+                "Cyber Security",
+                "Cloud Computing & DevOps",
+                "Blockchain Technology",
+                "Internet of Things (IoT)",
+                "Big Data Analytics"
+            ],
+            duration: "1 month",
+            structure: "First 15 days: Work on course material and initial tasks. Next 15 days: Complete and submit the final real-world project.",
+            onboarding: {
+                days: "Day 1-2",
+                activities: [
+                    "Welcome orientation via Google Meet/Zoom",
+                    "Company introduction, roles, and expectations",
+                    "Access to tools provided"
+                ],
+                tools: {
+                    communication: ["Slack", "Teams", "WhatsApp group"],
+                    taskManagement: ["Trello", "Notion", "Jira"],
+                    workSubmission: ["GitHub", "Google Drive"]
+                }
+            },
+            taskAssignment: {
+                frequency: "Weekly tasks assigned every Monday",
+                explanation: "Tasks explained in virtual meeting + written documentation",
+                deadlines: "Usually Sunday"
+            },
+            submission: {
+                methods: [
+                    "GitHub (for coding projects)",
+                    "Google Drive/Docs (for reports, PPTs, designs)"
+                ],
+                updates: "Daily/alternate-day updates in group chat"
+            },
+            checkins: {
+                daily: "Daily/alternate stand-up (10-15 min): Quick progress update",
+                weekly: "Weekly review (1 hour): Mentor checks submitted work & gives feedback"
+            },
+            learningSupport: [
+                "Weekly online sessions/workshops (optional)",
+                "Recorded tutorials/resources provided",
+                "Q&A support through Slack/WhatsApp"
+            ],
+            finalProject: "One main project to complete during internship. Final week: prepare presentation/demo. Demo presented live via Google Meet/Zoom.",
+            evaluation: {
+                criteria: [
+                    "Task completion on time",
+                    "Quality of submissions",
+                    "Participation in meetings",
+                    "Communication & teamwork"
+                ]
+            },
+            completion: {
+                certificate: "E-certificate issued after successful completion",
+                recommendation: "Option for LinkedIn recommendation",
+                opportunities: "Good performers may be offered extension or PPO"
+            }
+        };
+
+        const systemInstructionText = `You are TECHNOVA Assistant, an AI support agent for TECHNOVA, an online platform that provides real-world project-based internships. 
+
+        TECHNOVA INFORMATION:
+        - Courses offered: ${technovaInfo.courses.join(', ')}
+        - Internship duration: ${technovaInfo.duration}
+        - Structure: ${technovaInfo.structure}
+        - Onboarding: ${technovaInfo.onboarding.days} - ${technovaInfo.onboarding.activities.join(', ')}
+        - Tools: Communication: ${technovaInfo.onboarding.tools.communication.join(', ')}, Task Management: ${technovaInfo.onboarding.tools.taskManagement.join(', ')}, Work Submission: ${technovaInfo.onboarding.tools.workSubmission.join(', ')}
+        - Task assignment: ${technovaInfo.taskAssignment.frequency}. ${technovaInfo.taskAssignment.explanation}. Deadlines: ${technovaInfo.taskAssignment.deadlines}
+        - Submission: Methods: ${technovaInfo.submission.methods.join(', ')}. ${technovaInfo.submission.updates}
+        - Check-ins: ${technovaInfo.checkins.daily}. ${technovaInfo.checkins.weekly}
+        - Learning support: ${technovaInfo.learningSupport.join(', ')}
+        - Final project: ${technovaInfo.finalProject}
+        - Evaluation: Based on ${technovaInfo.evaluation.criteria.join(', ')}
+        - Completion: ${technovaInfo.completion.certificate}. ${technovaInfo.completion.recommendation}. ${technovaInfo.completion.opportunities}
+
+        YOUR BEHAVIOR:
+        - Be professional, helpful, and informative
+        - Provide clear, structured answers about TECHNOVA's programs
+        - Use bullet points or numbered lists when explaining processes
+        - If you don't know something, direct users to contact support
+        - Keep responses focused on TECHNOVA's offerings and processes
+        - Use a friendly but professional tone with appropriate emojis (🤖, 💻, 📚, 🎓, ✅)
+        - Ask clarifying questions if needed to provide better assistance`;
+
+        // Chat history for context
+        const History = [];
+        
+        // DOM Elements
+        const chatMessagesEl = document.getElementById('chatMessages');
+        const userInputEl = document.getElementById('userInput');
+        const sendButtonEl = document.getElementById('sendButton');
+        const currentTimeEl = document.getElementById('currentTime');
+
+        // Set current time
+        function updateCurrentTime() {
+            const now = new Date();
+            currentTimeEl.textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+        
+        // Initialize the chat
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set initial time
+            updateCurrentTime();
+            
+            // Add event listeners
+            sendButtonEl.addEventListener('click', handleUserSendMessage);
+            userInputEl.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') handleUserSendMessage();
+            });
+            
+            // Add quick reply listeners
+            document.querySelectorAll('.quick-reply').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const query = this.getAttribute('data-query');
+                    userInputEl.value = query;
+                    handleUserSendMessage();
+                });
+            });
+            
+            // Focus on input
+            userInputEl.focus();
+        });
+
+        // Function to handle sending messages
+        async function handleUserSendMessage() {
+            const messageText = userInputEl.value.trim();
+            if (messageText === '') return;
+
+            addMessageToUI(messageText, 'user');
+            userInputEl.value = '';
+            
+            const typingIndicator = addTypingIndicator();
+
+            try {
+                const botResponseText = await ChattingWithGemini(messageText);
+                removeTypingIndicator(typingIndicator);
+                addMessageToUI(botResponseText, 'bot');
+                
+                // Add quick replies based on the context
+                addQuickReplies(messageText.toLowerCase());
+            } catch (error) {
+                console.error("Error:", error);
+                removeTypingIndicator(typingIndicator);
+                addMessageToUI("I'm experiencing a technical issue. Please try again in a moment.", 'bot');
+            }
+        }
+
+        // Function to add a message to the UI
+        function addMessageToUI(text, sender) {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message', sender);
+            
+            const currentTime = getCurrentTime();
+            
+            if (sender === 'user') {
+                messageElement.innerHTML = `
+                    <div class="message-header">
+                        <div class="message-sender">You</div>
+                        <div class="message-time">${currentTime}</div>
+                    </div>
+                    ${text}
+                    <div class="message-status">
+                        <i class="fas fa-check-double" style="color: var(--primary);"></i> Delivered
+                    </div>
+                `;
+            } else {
+                messageElement.innerHTML = `
+                    <div class="message-header">
+                        <div class="message-sender">TECHNOVA Assistant</div>
+                        <div class="message-time">${currentTime}</div>
+                    </div>
+                    ${text}
+                `;
+            }
+            
+            chatMessagesEl.appendChild(messageElement);
+            chatMessagesEl.scrollTop = chatMessagesEl.scrollHeight;
+            
+            return messageElement;
+        }
+
+        // Function to add typing indicator
+        function addTypingIndicator() {
+            const typingElement = document.createElement('div');
+            typingElement.classList.add('typing-indicator');
+            typingElement.innerHTML = `
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+            `;
+            
+            chatMessagesEl.appendChild(typingElement);
+            chatMessagesEl.scrollTop = chatMessagesEl.scrollHeight;
+            
+            return typingElement;
+        }
+
+        // Function to remove typing indicator
+        function removeTypingIndicator(typingElement) {
+            chatMessagesEl.removeChild(typingElement);
+        }
+
+        // Function to get current time
+        function getCurrentTime() {
+            const now = new Date();
+            return now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+
+        // Function to add quick replies based on context
+        function addQuickReplies(userMessage) {
+            // Wait a bit for the message to appear
+            setTimeout(() => {
+                const quickRepliesContainer = document.createElement('div');
+                quickRepliesContainer.classList.add('quick-replies');
+                
+                if (userMessage.includes('course') || userMessage.includes('program')) {
+                    quickRepliesContainer.innerHTML = `
+                        <button class="quick-reply" data-query="AI & ML course details">
+                            <i class="fas fa-brain"></i> AI & ML Course
+                        </button>
+                        <button class="quick-reply" data-query="Data Science course">
+                            <i class="fas fa-chart-line"></i> Data Science
+                        </button>
+                        <button class="quick-reply" data-query="Web Development course">
+                            <i class="fas fa-code"></i> Web Development
+                        </button>
+                    `;
+                } else if (userMessage.includes('internship') || userMessage.includes('process')) {
+                    quickRepliesContainer.innerHTML = `
+                        <button class="quick-reply" data-query="Internship duration">
+                            <i class="fas fa-calendar"></i> Duration
+                        </button>
+                        <button class="quick-reply" data-query="Internship structure">
+                            <i class="fas fa-sitemap"></i> Structure
+                        </button>
+                        <button class="quick-reply" data-query="Internship onboarding">
+                            <i class="fas fa-user-plus"></i> Onboarding
+                        </button>
+                    `;
+                } else if (userMessage.includes('task') || userMessage.includes('assignment') || userMessage.includes('submission')) {
+                    quickRepliesContainer.innerHTML = `
+                        <button class="quick-reply" data-query="How to submit tasks?">
+                            <i class="fas fa-upload"></i> Submission Process
+                        </button>
+                        <button class="quick-reply" data-query="Task deadlines">
+                            <i class="fas fa-clock"></i> Deadlines
+                        </button>
+                        <button class="quick-reply" data-query="Task evaluation">
+                            <i class="fas fa-star"></i> Evaluation
+                        </button>
+                    `;
+                } else if (userMessage.includes('certificate') || userMessage.includes('completion')) {
+                    quickRepliesContainer.innerHTML = `
+                        <button class="quick-reply" data-query="How to get certificate?">
+                            <i class="fas fa-award"></i> Get Certificate
+                        </button>
+                        <button class="quick-reply" data-query="Certificate requirements">
+                            <i class="fas fa-list-check"></i> Requirements
+                        </button>
+                        <button class="quick-reply" data-query="LinkedIn recommendation">
+                            <i class="fab fa-linkedin"></i> LinkedIn
+                        </button>
+                    `;
+                } else {
+                    quickRepliesContainer.innerHTML = `
+                        <button class="quick-reply" data-query="Course information">
+                            <i class="fas fa-book"></i> Courses
+                        </button>
+                        <button class="quick-reply" data-query="Internship process">
+                            <i class="fas fa-briefcase"></i> Internship
+                        </button>
+                        <button class="quick-reply" data-query="Task submission">
+                            <i class="fas fa-tasks"></i> Tasks
+                        </button>
+                        <button class="quick-reply" data-query="Certificate">
+                            <i class="fas fa-certificate"></i> Certificate
+                        </button>
+                    `;
+                }
+                
+                // Add the quick replies to the last message
+                const lastMessage = chatMessagesEl.lastChild;
+                lastMessage.appendChild(quickRepliesContainer);
+                
+                // Add event listeners to the new quick replies
+                lastMessage.querySelectorAll('.quick-reply').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const query = this.getAttribute('data-query');
+                        userInputEl.value = query;
+                        handleUserSendMessage();
+                    });
+                });
+                
+                chatMessagesEl.scrollTop = chatMessagesEl.scrollHeight;
+            }, 100);
+        }
+
+        // Gemini API Interaction
+        async function ChattingWithGemini(userProblem) {
+            if (!GEMINI_API_KEY) {
+                return "I apologize, but I'm experiencing a technical issue. Please try again later or contact our support team directly.";
+            }
+
+            // Add user message to history
+            History.push({
+                role: 'user',
+                parts: [{ text: userProblem }]
+            });
+
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`;
+
+            const requestBody = {
+                contents: History,
+                systemInstruction: {
+                    parts: [{ text: systemInstructionText }]
+                },
+                generationConfig: {
+                    temperature: 0.3,
+                    maxOutputTokens: 800,
+                },
+                safetySettings: [
+                    { "category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_MEDIUM_AND_ABOVE" },
+                    { "category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_MEDIUM_AND_ABOVE" },
+                    { "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_MEDIUM_AND_ABOVE" },
+                    { "category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_MEDIUM_AND_ABOVE" }
+                ]
+            };
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestBody)
+                });
+
+                const responseData = await response.json();
+
+                if (!response.ok) {
+                    console.error("API Error:", responseData);
+                    const errorMessage = responseData.error?.message || `API error ${response.status}`;
+                    History.push({
+                        role: 'model',
+                        parts: [{ text: `API Error: ${errorMessage}` }]
+                    });
+                    return `I'm experiencing a technical issue. Please try again later or contact support. (Error: ${errorMessage})`;
+                }
+                
+                let botResponseText = "I'm not sure how to answer that. Could you please rephrase your question?";
+                if (responseData.candidates?.[0]?.content?.parts?.[0]?.text) {
+                    botResponseText = responseData.candidates[0].content.parts[0].text;
+                } else if (responseData.promptFeedback?.blockReason) {
+                    botResponseText = `I can't answer that question. Please contact our support team for assistance.`;
+                }
+
+                // Add response to history
+                History.push({
+                    role: 'model',
+                    parts: [{ text: botResponseText }]
+                });
+
+                // Keep history manageable
+                if (History.length > 20) {
+                    History.splice(0, History.length - 20);
+                }
+
+                return botResponseText;
+
+            } catch (error) {
+                console.error("Error:", error);
+                History.push({
+                    role: 'model',
+                    parts: [{ text: `Error: ${error.message}` }]
+                });
+                return `I'm experiencing a connection issue. Please try again in a moment.`;
+            }
+        }
+    </script>
+</body>
+</html>
